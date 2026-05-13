@@ -3,7 +3,7 @@ name: skill-forge
 description: Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format.
 metadata:
   author: Leeor Nahum
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Skill Forge
@@ -28,7 +28,7 @@ name: <domain>
 description: <what the skill does and when to use it>
 metadata:
   author: <your name>
-  version: "1.1.0"
+  version: "1.0.0"
 ---
 ```
 
@@ -37,6 +37,8 @@ Version rules:
 - patch: wording fixes, examples, small clarifications
 - minor: new guidance, wider supported scenarios, better structure
 - major: changed behavior, changed scope, renamed skill, or major rewrite
+
+When editing an existing skill, update `metadata.version` in the same change whenever behavior changes. Do not leave a substantive skill edit at the old version. Keep README or release notes aligned when they mention current behavior.
 
 ## Description Rules
 
