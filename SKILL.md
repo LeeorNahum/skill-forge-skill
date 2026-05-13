@@ -38,7 +38,7 @@ Version rules:
 - minor: new guidance, wider supported scenarios, better structure
 - major: changed behavior, changed scope, renamed skill, or major rewrite
 
-When editing an existing skill, update `metadata.version` in the same change whenever behavior changes. Do not leave a substantive skill edit at the old version. Keep README or release notes aligned when they mention current behavior.
+When editing an existing skill, update `metadata.version` using [Semantic Versioning (semver)](https://semver.org/) in the same change whenever the skill's behavior changes. Never leave a substantive skill edit at the old version. Make sure any README or release notes referencing current behavior are updated to match.
 
 ## Description Rules
 

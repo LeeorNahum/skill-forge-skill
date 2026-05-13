@@ -11,5 +11,3 @@ It is opinionated about quality and meaning, but not about temporary ecosystem p
 `references/standards.md` contains the official source-of-truth material and host-loading notes.
 
 `references/publishing.md` contains repo layout, installation, and publishing guidance.
-
-Current version: `1.2.0`.
