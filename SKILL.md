@@ -3,7 +3,7 @@ name: skill-forge
 description: Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format.
 metadata:
   author: Leeor Nahum
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Skill Forge
@@ -48,6 +48,8 @@ The description is the trigger. It should describe both:
 2. when the agent should use it
 
 Write for user intent, not internal implementation. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit.
+
+Frontmatter values should not contain colons or syntax that can break parsing.
 
 ```text
 Too vague:
