@@ -3,7 +3,7 @@ name: skill-forge
 description: Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format.
 metadata:
   author: Leeor Nahum
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # Skill Forge
@@ -93,6 +93,10 @@ Do not import adjacent standards, nearby examples, or recent conversation artifa
 
 If some information is useful but secondary, place it in a reference file and tell the agent when to read it. Do not let it leak into the opening thesis or core philosophy.
 
+Avoid negative anchors in generic skills. Do not preserve bad examples, deprecated folder names, real project names, local paths, or personal names just to say not to use them. Describe the category of mistake instead.
+
+When writing a reusable or meta skill, use placeholders unless a real proper noun is part of the skill's durable scope.
+
 ## Progressive Disclosure
 
 Keep `SKILL.md` focused and move conditional detail into `references/`, `scripts/`, or `assets/`.
@@ -107,6 +111,20 @@ Good:
 Weak:
 
 - See `references/` for more information.
+
+## Assets, References, And Scripts
+
+Use support files only when they have a clear job:
+
+- `references/`: explanatory guidance, decision rules, gotchas, examples, and material the agent reads before deciding what to do
+- `assets/`: copyable templates, configs, static resources, or fill-in artifacts that may become files in another project
+- `scripts/`: executable helpers the agent can run
+
+If markdown is meant to be read as guidance, put it in `references/`. If markdown is meant to be copied as a starter file, put it in `assets/` and make the fill-in or trim points obvious.
+
+An asset may contain editable placeholders. It does not need to be immutable, but it should be copyable as an artifact. If the file mainly explains judgment, tradeoffs, or rules, it is a reference, not an asset.
+
+Do not create support files speculatively. If `SKILL.md` does not tell the agent when to load or use a support file, the support file is probably bloat.
 
 ## Content Patterns
 

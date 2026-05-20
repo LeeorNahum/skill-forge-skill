@@ -2,7 +2,7 @@
 
 `skill-forge` is a skill for writing skills well.
 
-It helps an agent preserve high-signal wording, avoid context leakage, write tighter descriptions, structure progressive disclosure correctly, and keep standards or publishing detail in references instead of bloating the core skill.
+It helps an agent preserve high-signal wording, avoid context leakage, write tighter descriptions, and keep `SKILL.md` focused without losing important conditional material.
 
 It is opinionated about quality and meaning, but not about temporary ecosystem preferences that do not change the actual skill contract.
 
