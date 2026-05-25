@@ -42,7 +42,7 @@ At a high level:
 
 1. agents discover the skill from its metadata
 2. they load `SKILL.md` when the description matches the task
-3. they only read support files when `SKILL.md` gives a reason to do so
+3. they only read references, assets, and scripts when `SKILL.md` gives a reason to do so
 
 This means a reference file is not truly part of the skill unless `SKILL.md` tells the agent when to load it.
 

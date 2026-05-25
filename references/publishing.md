@@ -87,7 +87,7 @@ Do not hard-code one of these as the universal answer unless the user has explic
 
 ## Progressive Disclosure Rule
 
-If a support file matters, `SKILL.md` must say when to read it.
+If a reference, asset, or script matters, `SKILL.md` must say when to read or use it.
 
 Examples:
 

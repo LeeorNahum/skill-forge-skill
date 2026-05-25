@@ -124,7 +124,7 @@ If markdown is meant to be read as guidance, put it in `references/`. If markdow
 
 An asset may contain editable placeholders. It does not need to be immutable, but it should be copyable as an artifact. If the file mainly explains judgment, tradeoffs, or rules, it is a reference, not an asset.
 
-Do not create support files speculatively. If `SKILL.md` does not tell the agent when to load or use a support file, the support file is probably bloat.
+Do not create extra files speculatively. If `SKILL.md` does not tell the agent when to load or use a reference, asset, or script, that file is probably bloat.
 
 ## Content Patterns
 
