@@ -3,7 +3,7 @@ name: skill-forge
 description: Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format.
 metadata:
   author: Leeor Nahum
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # Skill Forge
@@ -34,9 +34,9 @@ metadata:
 
 Version rules:
 
-- patch: wording fixes, examples, small clarifications
-- minor: new guidance, wider supported scenarios, better structure
-- major: changed behavior, changed scope, renamed skill, or major rewrite
+- Patch: wording fixes, examples, small clarifications
+- Minor: new guidance, wider supported scenarios, better structure
+- Major: changed behavior, changed scope, renamed skill, or major rewrite
 
 When editing an existing skill, update `metadata.version` using [Semantic Versioning (semver)](https://semver.org/) in the same change whenever the skill's behavior changes. Never leave a substantive skill edit at the old version. Make sure any README or release notes referencing current behavior are updated to match.
 
@@ -48,10 +48,12 @@ Before incrementing, check git for the last committed version of the skill file.
 
 The description is the trigger. It should describe both:
 
-1. what the skill does
-2. when the agent should use it
+1. What the skill does
+2. When the agent should use it
 
 Write for user intent, not internal implementation. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit.
+
+The description is read in isolation to decide whether to load the skill, so every clause must earn its place in that decision. Do not spend it defining the artifact or using insider terms the agent will not recognize at selection time. Describe what the skill does and the situations that should trigger it, in words a deciding agent already understands.
 
 Frontmatter values should not contain colons or syntax that can break parsing.
 
@@ -73,6 +75,8 @@ Generic best practices, standard library usage, and common patterns the agent al
 
 Prefer procedures, gotchas, checklists, validation loops, and output templates over generic advice.
 
+Keep list voice consistent within a skill: parallel phrasing and one capitalization style across a list. Prefer starting bullets with a capital letter. Inconsistent list style reads as drift.
+
 No code unless the code is the artifact. Include explicit code only when enforcing a pattern that must be followed exactly, where the code template is itself the deliverable rather than an illustration.
 
 No "When to Use" section. The description handles triggering. Repeating it in the body wastes tokens.
@@ -81,13 +85,13 @@ No "When to Use" section. The description handles triggering. Repeating it in th
 
 When editing or improving a skill:
 
-- preserve distinctive, high-signal wording that carries the author's intent
-- do not flatten specialized language into generic process language
-- do not delete a concept just because you can paraphrase around it
-- if you move an idea, make sure the wording or equivalent force still exists somewhere intentional
-- if a phrase seems minor but anchors the whole skill's mentality, keep it
-- if a phrase carries real meaning, compression, taste, or domain signal, preserve it unless you are clearly improving it and deliberately relocating that meaning elsewhere
-- do not replace high-signal language with flatter but more generic wording
+- Preserve distinctive, high-signal wording that carries the author's intent
+- Do not flatten specialized language into generic process language
+- Do not delete a concept just because you can paraphrase around it
+- If you move an idea, make sure the wording or equivalent force still exists somewhere intentional
+- If a phrase seems minor but anchors the whole skill's mentality, keep it
+- If a phrase carries real meaning, compression, taste, or domain signal, preserve it unless you are clearly improving it and deliberately relocating that meaning elsewhere
+- Do not replace high-signal language with flatter but more generic wording
 
 ## Boundary Discipline
 
@@ -98,6 +102,8 @@ Do not import adjacent standards, nearby examples, or recent conversation artifa
 If some information is useful but secondary, place it in a reference file and tell the agent when to read it. Do not let it leak into the opening thesis or core philosophy.
 
 Avoid negative anchors in generic skills. Do not preserve bad examples, deprecated folder names, real project names, local paths, or personal names just to say not to use them. Describe the category of mistake instead.
+
+Positive examples anchor too. A sample name or token offered to illustrate a point is often copied verbatim instead of adapted. Use an example to show a shape or structure, and make clear the reader should choose the most accurate name for their own case rather than reusing the example's wording.
 
 When writing a reusable or meta skill, use placeholders unless a real proper noun is part of the skill's durable scope.
 
@@ -147,37 +153,42 @@ Use these when they fit. Not all skills need all of them.
 ```text
 <skill-root>/
 ├── SKILL.md              # core, keep focused, under ~500 lines
+├── AGENTS.md             # recommended, maintenance contract for editing the skill
 ├── references/           # documentation loaded on demand
 ├── scripts/              # executable code the agent runs
 ├── assets/               # templates, configs, static resources
-├── README.md             # optional, human-facing skim layer
+├── README.md             # recommended, human-facing skim layer
 └── LICENSE               # optional, useful for public repos
 ```
 
-Only create directories that the skill actually uses.
+Ship `AGENTS.md` and `README.md` by default for any skill meant to last: `AGENTS.md` as the maintenance contract, `README.md` as the human skim layer. They are recommended, not optional scaffolding; omit them only for a throwaway or trivial skill. Only create the `references/`, `scripts/`, and `assets/` directories the skill actually uses.
 
 Put conditional material in `references/` instead of leaving extra markdown files loose at the root.
 
 If a repo includes `README.md`, treat it as human-facing. It should be extremely concise, fast to skim, and focused on the minimum needed to understand the skill's value and file layout. Do not turn the README into a second `SKILL.md`.
 
+If a skill carries an `AGENTS.md`, treat it as the skill's maintenance contract: file roles, editing rules, wording conventions, sync provenance, and finishing checks for whoever edits the skill. Keep that maintainer guidance out of `SKILL.md`, which stays purely user-facing usage. A note such as how a vendored reference is regenerated belongs in `AGENTS.md`, not in the skill body.
+
 ## Repository And Publishing
 
 Read `references/publishing.md` when:
 
-- deciding the repo layout for a public skill
-- comparing distribution methods such as direct installs, GitHub-based installs, release artifacts, or submodules
-- writing install instructions
-- preparing tags, releases, or version bumps
+- Deciding the repo layout for a public skill
+- Comparing distribution methods such as direct installs, GitHub-based installs, release artifacts, or submodules
+- Writing install instructions
+- Preparing tags, releases, or version bumps
 
 ## Invocation Style
 
 Decide whether the skill should be:
 
-- auto-invoked for narrow, precise, task-specific workflows
-- manual-only for broad ambient guidance that would false-trigger too often
-- case-by-case when the skill sits between methodology and procedure
+- Auto-invoked for narrow, precise, task-specific workflows
+- Manual-only for broad ambient guidance that would false-trigger too often
+- Case-by-case when the skill sits between methodology and procedure
 
 If unsure, default to automatic only when the description can be precise enough to avoid frequent false positives.
+
+Set manual-only invocation with the host's mechanism, not wording alone. In hosts that support it, `disable-model-invocation: true` in the frontmatter marks a skill manual-only; see `references/standards.md` for host-specific fields. A manual-only skill still needs a description that states what it does and when, since the user reads it when choosing to invoke.
 
 ## Avoid Canonical Leaks
 
