@@ -1,9 +1,9 @@
 ---
-name: skill-forge
-description: Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format.
+name: "skill-forge"
+description: "Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format."
 metadata:
-  author: Leeor Nahum
-  version: "1.6.0"
+  author: "Leeor Nahum"
+  version: "1.7.0"
 ---
 
 # Skill Forge
@@ -24,10 +24,10 @@ For the official constraints, expected directories, and host-specific loading no
 
 ```yaml
 ---
-name: <domain>
-description: <what the skill does and when to use it>
+name: "<domain>"
+description: "<what the skill does and when to use it>"
 metadata:
-  author: <your name>
+  author: "<your name>"
   version: "1.0.0"
 ---
 ```
@@ -55,7 +55,7 @@ Write for user intent, not internal implementation. Be specific about domain, su
 
 The description is read in isolation to decide whether to load the skill, so every clause must earn its place in that decision. Do not spend it defining the artifact or using insider terms the agent will not recognize at selection time. Describe what the skill does and the situations that should trigger it, in words a deciding agent already understands.
 
-Frontmatter values should not contain colons or syntax that can break parsing.
+Quote frontmatter string values by default, especially `description`, `name`, and `metadata.author`. Natural descriptions often need YAML-sensitive characters such as colons, apostrophes, brackets, braces, hashes, commas, and leading punctuation; quoting preserves the wording and avoids parse failures.
 
 ```text
 Too vague:
