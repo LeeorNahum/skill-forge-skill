@@ -3,22 +3,14 @@ name: "skill-forge"
 description: "Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "1.8.0"
+  version: "2.0.0"
 ---
 
 # Skill Forge
 
 Create skills that are concise, precisely scoped, and free of context bloat. A skill transfers knowledge the agent lacks, not knowledge it already has.
 
-The spec source of truth is [skill.md](http://skill.md/).
-
-For the official constraints, expected directories, and host-specific loading notes, read `references/standards.md` when you need them.
-
-## Naming Convention
-
-- **Skill root folder** and **`name` field**: `<domain>` (example: `data-export`)
-- **Repo name** may match the skill name directly or may use a `-skill` suffix for personal organization
-- The repo naming choice is organizational rather than semantic; do not treat it as part of the skill contract
+The specification source of truth is [agentskills.io](https://agentskills.io/specification).
 
 ## Frontmatter
 
@@ -26,11 +18,27 @@ For the official constraints, expected directories, and host-specific loading no
 ---
 name: "<domain>"
 description: "<what the skill does and when to use it>"
+license: "<license name or bundled license file>"
+compatibility: "<specific environment requirements, when needed>"
+allowed-tools: "<space-separated pre-approved tools, when supported>"
 metadata:
   author: "<your name>"
   version: "1.0.0"
 ---
 ```
+
+Only `name` and `description` are required. Omit optional fields that do not apply.
+
+Quote every frontmatter string value, including simple identifiers, descriptions, licenses, compatibility text, tool lists, and metadata values. YAML keys remain unquoted. Consistent quoting prevents punctuation such as colons, hashes, braces, brackets, commas, and leading special characters from changing how YAML parses a value.
+
+Frontmatter contract:
+
+- `name`: Required. Use 1-64 lowercase ASCII letters, numbers, and hyphens. Match the parent directory and use no leading, trailing, or consecutive hyphens.
+- `description`: Required. Use 1-1024 characters to state what the skill does and when to use it.
+- `license`: Optional. Use a short license name or a reference to a bundled license file.
+- `compatibility`: Optional. Use 1-500 characters only for real environment requirements such as intended products, system packages, or network access.
+- `metadata`: Optional. Use a mapping of string keys to string values. Prefer reasonably unique keys.
+- `allowed-tools`: Optional and experimental. Use a space-separated string of pre-approved tools only when the target client supports it.
 
 Version rules:
 
@@ -51,11 +59,9 @@ The description is the trigger. It should describe both:
 1. What the skill does
 2. When the agent should use it
 
-Write for user intent, not internal implementation. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit.
+Write for user intent, not internal implementation. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit. Prefer imperative phrasing that tells the agent when to use the skill.
 
 The description is read in isolation to decide whether to load the skill, so every clause must earn its place in that decision. Do not spend it defining the artifact or using insider terms the agent will not recognize at selection time. Describe what the skill does and the situations that should trigger it, in words a deciding agent already understands.
-
-Quote frontmatter string values by default, especially `description`, `name`, and `metadata.author`. Natural descriptions often need YAML-sensitive characters such as colons, apostrophes, brackets, braces, hashes, commas, and leading punctuation; quoting preserves the wording and avoids parse failures.
 
 ```text
 Too vague:
@@ -114,16 +120,11 @@ When writing a reusable or meta skill, use placeholders unless a real proper nou
 
 Keep `SKILL.md` focused and move conditional detail into `references/`, `scripts/`, or `assets/`.
 
-Do not only say "see references." Tell the agent exactly when to read them.
+Tell the agent exactly when to read or use every support file. A loose pointer to a directory is not enough.
 
-Good:
+Keep `SKILL.md` under 500 lines and, where practical, under the specification's recommended 5,000-token budget. Keep references one level deep from `SKILL.md`; let the main file route directly to every conditional resource.
 
-- Read `references/standards.md` when checking official frontmatter rules, directory expectations, or host-specific loading behavior.
-- Read `references/publishing.md` when preparing a public skill repo, choosing a distribution method, or setting semver policy.
-
-Weak:
-
-- See `references/` for more information.
+Create a support file only when its material is conditional enough that most uses should not load it. Keep information in `SKILL.md` when every invocation needs it.
 
 ## Assets, References, And Scripts
 
@@ -154,7 +155,7 @@ Use these when they fit. Not all skills need all of them.
 ## Directory Structure
 
 ```text
-<skill-root>/
+<skill-name>/
 ├── SKILL.md              # core, keep focused, under ~500 lines
 ├── AGENTS.md             # recommended, maintenance contract for editing the skill
 ├── references/           # documentation loaded on demand
@@ -164,6 +165,8 @@ Use these when they fit. Not all skills need all of them.
 └── LICENSE               # optional, useful for public repos
 ```
 
+The local `<skill-name>` directory must exactly match the frontmatter `name`. Remote repository naming is outside the Agent Skills specification and outside this skill's guidance.
+
 Ship `AGENTS.md` and `README.md` by default for any skill meant to last: `AGENTS.md` as the maintenance contract, `README.md` as the human skim layer. They are recommended, not optional scaffolding; omit them only for a throwaway or trivial skill. Only create the `references/`, `scripts/`, and `assets/` directories the skill actually uses.
 
 Put conditional material in `references/` instead of leaving extra markdown files loose at the root.
@@ -171,15 +174,6 @@ Put conditional material in `references/` instead of leaving extra markdown file
 If a repo includes `README.md`, treat it as human-facing. It should be extremely concise, fast to skim, and focused on the minimum needed to understand the skill's value and file layout. Do not turn the README into a second `SKILL.md`.
 
 If a skill carries an `AGENTS.md`, treat it as the skill's maintenance contract: file roles, editing rules, wording conventions, sync provenance, and finishing checks for whoever edits the skill. Keep that maintainer guidance out of `SKILL.md`, which stays purely user-facing usage. A note such as how a vendored reference is regenerated belongs in `AGENTS.md`, not in the skill body.
-
-## Repository And Publishing
-
-Read `references/publishing.md` when:
-
-- Deciding the repo layout for a public skill
-- Comparing distribution methods such as direct installs, GitHub-based installs, release artifacts, or submodules
-- Writing install instructions
-- Preparing tags, releases, or version bumps
 
 ## Invocation Style
 
@@ -191,7 +185,7 @@ Decide whether the skill should be:
 
 If unsure, default to automatic only when the description can be precise enough to avoid frequent false positives.
 
-Set manual-only invocation with the host's mechanism, not wording alone. In hosts that support it, `disable-model-invocation: true` in the frontmatter marks a skill manual-only; see `references/standards.md` for host-specific fields. A manual-only skill still needs a description that states what it does and when, since the user reads it when choosing to invoke.
+Set manual-only invocation with the host's mechanism, not wording alone. In hosts that support it, `disable-model-invocation: true` in the frontmatter marks a skill manual-only. A manual-only skill still needs a description that states what it does and when, since the user reads it when choosing to invoke.
 
 ## Avoid Canonical Leaks
 
@@ -206,3 +200,16 @@ Project-specific skills are the exception: when a skill is explicitly scoped to 
 A skill should encapsulate one coherent unit of work, narrow enough to trigger precisely and broad enough that it does not need a sibling skill loaded alongside it to do its job.
 
 If a skill requires another skill to function, either merge them or reconsider the split.
+
+## Validation
+
+Before finishing:
+
+- Run `skills-ref validate <skill-root>` when the official reference validator is available.
+- Confirm every support file named by `SKILL.md` exists and has a direct loading condition.
+- Keep `SKILL.md` within the recommended line and token budgets.
+- Test the description against realistic should-trigger and near-miss should-not-trigger prompts.
+- Test realistic skill tasks and compare the output with a baseline or the previous version.
+- For scripts, document prerequisites, avoid interactive prompts, expose useful help, return actionable errors, and use structured output when another step consumes the result.
+
+The reference validator checks frontmatter and naming conventions. It does not replace trigger, workflow, or output evaluation.
