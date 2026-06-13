@@ -3,7 +3,7 @@ name: "skill-forge"
 description: "Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # Skill Forge
@@ -73,6 +73,8 @@ Context bloat is not only verbosity. It is also nearby information that does not
 
 Generic best practices, standard library usage, and common patterns the agent already knows are also context bloat.
 
+Judge an addition against the whole skill, not the amount of attention it received in the current request. Give it only the prominence its lasting importance warrants. Prefer the smallest edit in the existing section or reference over new sections, repeated summaries, or broad rewrites.
+
 Prefer procedures, gotchas, checklists, validation loops, and output templates over generic advice.
 
 Keep list voice consistent within a skill: parallel phrasing and one capitalization style across a list. Prefer starting bullets with a capital letter. Inconsistent list style reads as drift.
@@ -85,6 +87,7 @@ No "When to Use" section. The description handles triggering. Repeating it in th
 
 When editing or improving a skill:
 
+- Preserve working text outside the required change. Rewrite adjacent material only when the new requirement makes it inaccurate, misplaced, or meaningfully weaker.
 - Preserve distinctive, high-signal wording that carries the author's intent
 - Do not flatten specialized language into generic process language
 - Do not delete a concept just because you can paraphrase around it
