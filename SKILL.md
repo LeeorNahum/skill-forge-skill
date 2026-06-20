@@ -3,7 +3,7 @@ name: "skill-forge"
 description: "Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Skill Forge
@@ -177,15 +177,17 @@ If a skill carries an `AGENTS.md`, treat it as the skill's maintenance contract:
 
 ## Invocation Style
 
+The description is the primary mechanism for controlling when a skill loads. If it is precise enough, auto-invocation works correctly and that is the right outcome. Invocation problems are almost always description problems: tighten the trigger wording before reaching for any other mechanism.
+
 Decide whether the skill should be:
 
 - Auto-invoked for narrow, precise, task-specific workflows
-- Manual-only for broad ambient guidance that would false-trigger too often
+- Manual-only for skills that are typed commands with no natural-language trigger the description could match
 - Case-by-case when the skill sits between methodology and procedure
 
-If unsure, default to automatic only when the description can be precise enough to avoid frequent false positives.
+If unsure, default to automatic. A well-scoped description avoids false positives without any additional mechanism.
 
-Set manual-only invocation with the host's mechanism, not wording alone. In hosts that support it, `disable-model-invocation: true` in the frontmatter marks a skill manual-only. A manual-only skill still needs a description that states what it does and when, since the user reads it when choosing to invoke.
+Set manual-only invocation with the host's mechanism, not wording alone. In hosts that support it, `disable-model-invocation: true` in the frontmatter marks a skill manual-only. Reserve this for skills where there is genuinely no user intent the description could match: the skill is a bare typed command, not a task. Do not use it because of false-positive risk or timing concerns. Those are description problems. A manual-only skill still needs a description that states what it does and when, since the user reads it when choosing to invoke.
 
 ## Avoid Canonical Leaks
 
