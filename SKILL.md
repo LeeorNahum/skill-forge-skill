@@ -3,7 +3,7 @@ name: "skill-forge"
 description: "Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "2.1.0"
+  version: "2.1.1"
 ---
 
 # Skill Forge
@@ -59,7 +59,7 @@ The description is the trigger. It should describe both:
 1. What the skill does
 2. When the agent should use it
 
-Write for user intent, not internal implementation. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit. Prefer imperative phrasing that tells the agent when to use the skill.
+Write for user intent, not internal implementation. Implementation steps, internal behaviors, and procedural detail belong in the body; the description covers only the high-level job and when to invoke. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit. Prefer imperative phrasing that tells the agent when to use the skill.
 
 The description is read in isolation to decide whether to load the skill, so every clause must earn its place in that decision. Do not spend it defining the artifact or using insider terms the agent will not recognize at selection time. Describe what the skill does and the situations that should trigger it, in words a deciding agent already understands.
 
