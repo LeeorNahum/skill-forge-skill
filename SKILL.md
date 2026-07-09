@@ -3,7 +3,7 @@ name: "skill-forge"
 description: "Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "2.1.1"
+  version: "2.1.2"
 ---
 
 # Skill Forge
@@ -46,11 +46,11 @@ Version rules:
 - Minor: new guidance, wider supported scenarios, better structure
 - Major: changed behavior, changed scope, renamed skill, or major rewrite
 
-When editing an existing skill, update `metadata.version` using [Semantic Versioning (semver)](https://semver.org/) in the same change whenever the skill's behavior changes. Never leave a substantive skill edit at the old version. Make sure any README or release notes referencing current behavior are updated to match.
+When editing an existing skill, update `metadata.version` using [Semantic Versioning (semver)](https://semver.org/) in the same change whenever the skill's behavior changes. Never leave a substantive accepted skill edit at the old version. Make sure any README or release notes referencing current behavior are updated to match.
 
-Increment immediately when changes are made. Do not wait for a commit, push, or user signal to bump the version. If the version is not updated before the user commits on their own, the changes ship with a stale version.
+Do not bump the version for every message, pass, or partial edit. During initial creation, active drafting, fast review loops, or uncommitted edits the same agent owns, keep the draft's version stable until the work is ready to be treated as the next version. Then make one semver bump that describes the finished change since the last committed, published, or otherwise accepted checkpoint.
 
-Before incrementing, check git for the last committed version of the skill file. If uncommitted changes have accumulated across multiple passes since that checkpoint, calibrate the bump to reflect the full delta honestly. A sequence of minor additions since the last commit may warrant a single well-chosen minor bump rather than separate micro-increments per pass. If git history is unavailable, increment based on the current change as normal. The version must be truthful about the scope of all changes since the last committed state.
+Before incrementing, check git for the last committed version of the skill file. If uncommitted changes have accumulated across multiple passes since that checkpoint, calibrate one bump to reflect the full delta honestly. A sequence of related additions since the last commit may warrant a single well-chosen minor bump rather than separate micro-increments per pass. If git history is unavailable, use the nearest meaningful checkpoint: the last user-approved draft, install, release, or handoff.
 
 ## Description Rules
 
