@@ -1,16 +1,40 @@
 ---
 name: "skill-forge"
-description: "Create, design, refine, and package Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during edits, decide invocation style, or asks about skill structure, naming conventions, or SKILL.md format."
+description: "Create, design, refine, and validate Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new skill, improve skill triggering, organize references/scripts/assets, preserve key wording and meaning during skill edits, decide invocation style, or asks about skill structure, skill naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "2.1.2"
+  version: "2.2.0"
 ---
 
 # Skill Forge
 
 Create skills that are concise, precisely scoped, and free of context bloat. A skill transfers knowledge the agent lacks, not knowledge it already has.
 
-The specification source of truth is [agentskills.io](https://agentskills.io/specification).
+The upstream source of truth is [agentskills.io](https://agentskills.io/specification). The specification and its authoring guides are vendored under `references/`. This file is the opinionated distillation. The references are the upstream originals, and `AGENTS.md` owns how they are kept current.
+
+## Reference Loading
+
+- Read `references/specification.md` before creating a skill from scratch, and whenever unsure about an exact frontmatter constraint, the directory contract, or what the standard requires versus what is host-specific or house convention. It is the normative spec. Follow it exactly.
+- Read `references/optimizing-descriptions.md` when a skill misfires or fails to trigger and the description needs systematic tuning, or when running a trigger evaluation.
+- Read `references/using-scripts.md` when adding or reviewing a `scripts/` directory.
+- Read `references/evaluating-skills.md` when building evals for a skill or measuring with-skill versus without-skill performance.
+- Read `references/best-practices.md` when structuring a complex multi-file skill and this file's rules leave a judgment call open.
+
+## What Each Part Is For
+
+Agents routinely blur these boundaries. Check every skill edit against this table:
+
+| Part | Job | Consumed |
+| --- | --- | --- |
+| `name` + `description` | Selection only. They decide whether the skill loads and are never the rules | Read at startup for every skill |
+| `SKILL.md` body | The always-needed rules and routing | Loaded when the skill triggers |
+| `references/` | Conditional rules and guidance | Loaded when a routing condition matches |
+| `assets/` | Copyable artifacts | Copied or filled in, not read as guidance |
+| `scripts/` | Executable helpers | Run, not read as guidance |
+| `AGENTS.md` | Maintenance contract for editing the skill | Read when editing the skill, never at use time |
+| `README.md` | Human skim layer | Read by humans, not loaded by agents |
+
+An instruction that lives only in the description is invisible at execution time, because the description's job ends once the skill loads. Put rules in the body or a reference. In the other direction, procedural detail in the description wastes the selection budget and blurs the trigger.
 
 ## Frontmatter
 
@@ -40,6 +64,8 @@ Frontmatter contract:
 - `metadata`: Optional. Use a mapping of string keys to string values. Prefer reasonably unique keys.
 - `allowed-tools`: Optional and experimental. Use a space-separated string of pre-approved tools only when the target client supports it.
 
+These six keys are the complete set the specification defines. The reference validator rejects any other top-level key, so a host-specific field makes the skill fail strict validation. Do not add one. Custom properties belong under `metadata`.
+
 Version rules:
 
 - Patch: wording fixes, examples, small clarifications
@@ -59,7 +85,7 @@ The description is the trigger. It should describe both:
 1. What the skill does
 2. When the agent should use it
 
-Write for user intent, not internal implementation. Implementation steps, internal behaviors, and procedural detail belong in the body; the description covers only the high-level job and when to invoke. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit. Prefer imperative phrasing that tells the agent when to use the skill.
+Write for user intent, not internal implementation. Implementation steps, internal behaviors, and procedural detail belong in the body. The description covers only the high-level job and when to invoke. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit. Prefer imperative phrasing that tells the agent when to use the skill. Err on the side of being pushy: list the situations that should trigger the skill even when the user would not name the domain themselves.
 
 The description is read in isolation to decide whether to load the skill, so every clause must earn its place in that decision. Do not spend it defining the artifact or using insider terms the agent will not recognize at selection time. Describe what the skill does and the situations that should trigger it, in words a deciding agent already understands.
 
@@ -74,6 +100,8 @@ Parse, validate, and export structured data to external formats. Use when readin
 ## Content Philosophy
 
 Add what the agent lacks and omit what it already knows. Before including any content, ask: "Would the agent get this wrong without being told?" If no, cut it.
+
+Ground the skill in demonstrated expertise: real runs, corrections that were actually needed, project artifacts, and observed failure cases, not generic model knowledge. When possible, refine by running the skill against a real task, reading the execution trace, and feeding what broke back into the skill.
 
 Context bloat is not only verbosity. It is also nearby information that does not belong to the skill's true scope but slips in because it was present in the conversation.
 
@@ -122,7 +150,7 @@ Keep `SKILL.md` focused and move conditional detail into `references/`, `scripts
 
 Tell the agent exactly when to read or use every support file. A loose pointer to a directory is not enough.
 
-Keep `SKILL.md` under 500 lines and, where practical, under the specification's recommended 5,000-token budget. Keep references one level deep from `SKILL.md`; let the main file route directly to every conditional resource.
+Keep `SKILL.md` under 500 lines and, where practical, under the specification's recommended 5,000-token budget. Reference every support file by its relative path from the skill root, such as `references/<file>.md` or `scripts/<file>`. Keep references one level deep from `SKILL.md`, and let the main file route directly to every conditional resource. Avoid chains where one reference points to another.
 
 Create a support file only when its material is conditional enough that most uses should not load it. Keep information in `SKILL.md` when every invocation needs it.
 
@@ -138,7 +166,24 @@ If markdown is meant to be read as guidance, put it in `references/`. If markdow
 
 An asset may contain editable placeholders. It does not need to be immutable, but it should be copyable as an artifact. If the file mainly explains judgment, tradeoffs, or rules, it is a reference, not an asset.
 
+Prefer pointing to an asset over embedding the artifact's content inline in `SKILL.md` or a reference. An inlined artifact bloats every load and drifts from the copyable original.
+
 Do not create extra files speculatively. If `SKILL.md` does not tell the agent when to load or use a reference, asset, or script, that file is probably bloat.
+
+## Vendored Upstream Sources
+
+When a skill wraps a living external source of truth, such as a specification, official vendor guidance, or generated documentation, vendor that material into `references/` instead of telling the agent to fetch it at use time. Vendoring keeps the skill self-contained, offline-safe, and identical across agents, while a sync job keeps it current.
+
+The working pattern:
+
+- A zero-dependency script in `scripts/` resolves the upstream's latest commit, fetches every file pinned to that exact commit, applies any transforms, and writes the generated files into `references/`
+- Each generated file starts with a generated-file banner and a source link, but no upstream commit hash, so the file only changes when its content changes
+- A scheduled workflow runs the script and commits only when something changed, recording the upstream commit in the sync commit message. Provenance lives in git history, not in the tracked files
+- When the script rewrites upstream advice the skill disagrees with, add a workflow guard that fails if an un-rewritten instance slips through
+- Never hand-edit a generated file. Change the script or the upstream and re-run the sync
+- A sync-only content refresh does not bump `metadata.version`. The version tracks authored behavior
+
+Document the upstream sources, transform rules, and update playbook in the skill's `AGENTS.md`.
 
 ## Content Patterns
 
@@ -167,13 +212,13 @@ Use these when they fit. Not all skills need all of them.
 
 The local `<skill-name>` directory must exactly match the frontmatter `name`. Remote repository naming is outside the Agent Skills specification and outside this skill's guidance.
 
-Ship `AGENTS.md` and `README.md` by default for any skill meant to last: `AGENTS.md` as the maintenance contract, `README.md` as the human skim layer. They are recommended, not optional scaffolding; omit them only for a throwaway or trivial skill. Only create the `references/`, `scripts/`, and `assets/` directories the skill actually uses.
+Ship `AGENTS.md` and `README.md` by default for any skill meant to last: `AGENTS.md` as the maintenance contract, `README.md` as the human skim layer. They are recommended, not optional scaffolding. Omit them only for a throwaway or trivial skill. Only create the `references/`, `scripts/`, and `assets/` directories the skill actually uses.
 
 Put conditional material in `references/` instead of leaving extra markdown files loose at the root.
 
 If a repo includes `README.md`, treat it as human-facing. It should be extremely concise, fast to skim, and focused on the minimum needed to understand the skill's value and file layout. Do not turn the README into a second `SKILL.md`.
 
-If a skill carries an `AGENTS.md`, treat it as the skill's maintenance contract: file roles, editing rules, wording conventions, sync provenance, and finishing checks for whoever edits the skill. Keep that maintainer guidance out of `SKILL.md`, which stays purely user-facing usage. A note such as how a vendored reference is regenerated belongs in `AGENTS.md`, not in the skill body.
+If a skill carries an `AGENTS.md`, treat it as the skill's maintenance contract: file roles, editing rules, wording conventions, sync provenance, and finishing checks for whoever edits the skill. Its job is continuity: many sessions of agent edits accumulate on a lasting skill, and the contract keeps style, voice, and scope from drifting across them. Keep that maintainer guidance out of `SKILL.md`, which stays purely user-facing usage. A note such as how a vendored reference is regenerated belongs in `AGENTS.md`, not in the skill body.
 
 ## Invocation Style
 
@@ -187,7 +232,7 @@ Decide whether the skill should be:
 
 If unsure, default to automatic. A well-scoped description avoids false positives without any additional mechanism.
 
-Set manual-only invocation with the host's mechanism, not wording alone. In hosts that support it, `disable-model-invocation: true` in the frontmatter marks a skill manual-only. Reserve this for skills where there is genuinely no user intent the description could match: the skill is a bare typed command, not a task. Do not use it because of false-positive risk or timing concerns. Those are description problems. A manual-only skill still needs a description that states what it does and when, since the user reads it when choosing to invoke.
+Set manual-only behavior in the description itself, never with a frontmatter flag, which would be a non-spec key the Frontmatter contract forbids. A skill that should only run when the user names it says so plainly in its description. Reserve manual-only for skills where there is genuinely no user intent the description could match: the skill is a bare typed command, not a task. Do not go manual-only because of false-positive risk or timing concerns. Those are description problems. A manual-only skill still needs a description that states what it does and when, since the user reads it when choosing to invoke.
 
 ## Avoid Canonical Leaks
 
@@ -207,11 +252,11 @@ If a skill requires another skill to function, either merge them or reconsider t
 
 Before finishing:
 
-- Run `skills-ref validate <skill-root>` when the official reference validator is available.
-- Confirm every support file named by `SKILL.md` exists and has a direct loading condition.
+- Run `node scripts/validate.mjs <skill-root>` from this skill's root. The bundled zero-dependency validator enforces the spec frontmatter contract, checks that every support file path named in the target `SKILL.md` exists, and flags unreferenced support files. One documented softening: a `<name>-skill` repo checkout directory warns instead of failing, since the spec's name-matches-directory rule binds the installed path. Also run `skills-ref validate <skill-root>` when the official reference validator is available.
+- Confirm every support file named by `SKILL.md` has a direct loading condition.
 - Keep `SKILL.md` within the recommended line and token budgets.
-- Test the description against realistic should-trigger and near-miss should-not-trigger prompts.
+- Test the description against realistic should-trigger and near-miss should-not-trigger prompts, roughly ten of each, and tune until both sets pass.
 - Test realistic skill tasks and compare the output with a baseline or the previous version.
 - For scripts, document prerequisites, avoid interactive prompts, expose useful help, return actionable errors, and use structured output when another step consumes the result.
 
-The reference validator checks frontmatter and naming conventions. It does not replace trigger, workflow, or output evaluation.
+The reference validator enforces the frontmatter contract: required `name` and `description`, the length caps, the `name` charset and parent-directory match, and rejection of any top-level key outside the six the specification defines. Every finding is an error and a failing run exits non-zero. It ships inside the specification repository as a reference implementation rather than a published package. The sibling commands `skills-ref read-properties` and `skills-ref to-prompt` inspect metadata and preview a catalog entry. It does not replace trigger, workflow, or output evaluation.
