@@ -118,6 +118,19 @@ for (const ref of new Set(body.match(refPattern) ?? [])) {
   if (!existsSync(join(root, ref))) errors.push(`SKILL.md references missing file \`${ref}\``);
 }
 
+// House: support-file routing in prose must be a descriptive Markdown link.
+// Literal paths inside fenced executable examples remain valid command text.
+const proseBody = body.replace(/```[\s\S]*?```/g, "");
+const linkedSupportFiles = new Set(
+  [...proseBody.matchAll(/\[[^\]]+\]\(((?:references|scripts|assets)\/[\w./-]+\.\w+)(?:#[^)]+)?\)/g)]
+    .map((match) => match[1]),
+);
+for (const ref of new Set(proseBody.match(refPattern) ?? [])) {
+  if (!linkedSupportFiles.has(ref)) {
+    errors.push(`prose support-file reference \`${ref}\` must be a descriptive Markdown link`);
+  }
+}
+
 // Every support file should be reachable from SKILL.md, or documented in
 // AGENTS.md when it is a maintenance tool rather than a use-time resource.
 const agentsPath = join(root, "AGENTS.md");

@@ -3,7 +3,7 @@ name: "skill-forge"
 description: "Create, design, refine, and validate Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new Agent Skill, improve an Agent Skill's triggering description, organize an Agent Skill's references, scripts, or assets directories, preserve key wording and meaning during Agent Skill edits, decide an Agent Skill's automatic-versus-manual invocation style, or asks about Agent Skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "2.2.1"
+  version: "2.3.0"
 ---
 
 # Skill Forge
@@ -14,11 +14,11 @@ The upstream source of truth is [agentskills.io](https://agentskills.io/specific
 
 ## Reference Loading
 
-- Read `references/specification.md` before creating a skill from scratch, and whenever unsure about an exact frontmatter constraint, the directory contract, or what the standard requires versus what is host-specific or house convention. It is the normative spec. Follow it exactly.
-- Read `references/optimizing-descriptions.md` when a skill misfires or fails to trigger and the description needs systematic tuning, or when running a trigger evaluation.
-- Read `references/using-scripts.md` when adding or reviewing a `scripts/` directory.
-- Read `references/evaluating-skills.md` when building evals for a skill or measuring with-skill versus without-skill performance.
-- Read `references/best-practices.md` when structuring a complex multi-file skill and this file's rules leave a judgment call open.
+- Read the [Agent Skills specification](references/specification.md) before creating a skill from scratch, and whenever unsure about an exact frontmatter constraint, the directory contract, or what the standard requires versus what is host-specific or house convention. It is the normative spec. Follow it exactly.
+- Read [Optimizing descriptions](references/optimizing-descriptions.md) when a skill misfires or fails to trigger and the description needs systematic tuning, or when running a trigger evaluation.
+- Read [Using scripts](references/using-scripts.md) when adding or reviewing a `scripts/` directory.
+- Read [Evaluating skills](references/evaluating-skills.md) when building evals for a skill or measuring with-skill versus without-skill performance.
+- Read [Skill authoring best practices](references/best-practices.md) when structuring a complex multi-file skill and this file's rules leave a judgment call open.
 
 ## What Each Part Is For
 
@@ -150,7 +150,7 @@ Keep `SKILL.md` focused and move conditional detail into `references/`, `scripts
 
 Tell the agent exactly when to read or use every support file. A loose pointer to a directory is not enough.
 
-Keep `SKILL.md` under 500 lines and, where practical, under the specification's recommended 5,000-token budget. Reference every support file by its relative path from the skill root, such as `references/<file>.md` or `scripts/<file>`. Keep references one level deep from `SKILL.md`, and let the main file route directly to every conditional resource. Avoid chains where one reference points to another.
+Keep `SKILL.md` under 500 lines and, where practical, under the specification's recommended 5,000-token budget. Link every support file directly from `SKILL.md` with a descriptive Markdown link and a relative path from the skill root, as demonstrated by the [specification](references/specification.md) and [bundled validator](scripts/validate.mjs) links in this skill. Do not route an agent with a bare path in prose or a code span. Literal paths remain appropriate inside executable commands. Keep support files one level deep from `SKILL.md`, and let the main file route directly to every conditional resource. Avoid chains where one reference points to another.
 
 Create a support file only when its material is conditional enough that most uses should not load it. Keep information in `SKILL.md` when every invocation needs it.
 
@@ -252,7 +252,7 @@ If a skill requires another skill to function, either merge them or reconsider t
 
 Before finishing:
 
-- Run `node scripts/validate.mjs <skill-root>` from this skill's root. The bundled zero-dependency validator enforces the spec frontmatter contract, checks that every support file path named in the target `SKILL.md` exists, and flags unreferenced support files. One documented softening: a `<name>-skill` repo checkout directory warns instead of failing, since the spec's name-matches-directory rule binds the installed path. Also run `skills-ref validate <skill-root>` when the official reference validator is available.
+- Run the [bundled validator](scripts/validate.mjs) as `node scripts/validate.mjs <skill-root>` from this skill's root. It enforces the spec frontmatter contract, checks that every support file path named in the target `SKILL.md` exists, requires prose references to be Markdown links, and flags unreferenced support files. One documented softening: a `<name>-skill` repo checkout directory warns instead of failing, since the spec's name-matches-directory rule binds the installed path. Also run `skills-ref validate <skill-root>` when the official reference validator is available.
 - Confirm every support file named by `SKILL.md` has a direct loading condition.
 - Keep `SKILL.md` within the recommended line and token budgets.
 - Test the description against realistic should-trigger and near-miss should-not-trigger prompts, roughly ten of each, and tune until both sets pass.
