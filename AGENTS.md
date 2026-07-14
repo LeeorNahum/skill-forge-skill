@@ -11,6 +11,7 @@ Rules for editing the **skill-forge** skill. User-facing guidance lives in `SKIL
 | `scripts/sync.mjs` | Hand | Vendors the spec and guides from `agentskills/agentskills`, pinned to one upstream commit |
 | `scripts/validate.mjs` | Hand | Zero-dependency spec validator run against skills being forged |
 | `.github/workflows/sync-upstream.yml` | Hand | Weekly and on-demand sync, commits only on change |
+| `.gitattributes` | Hand | Forces LF line endings so Windows-local and Linux-CI runs never disagree |
 | `README.md` | Hand | Short human summary |
 
 One owner per concern. Never hand-edit a generated file. Change `scripts/sync.mjs` and re-run it.
