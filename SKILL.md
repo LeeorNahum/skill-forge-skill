@@ -3,7 +3,7 @@ name: "skill-forge"
 description: "Create, design, refine, and validate Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new Agent Skill, improve an Agent Skill's triggering description, organize an Agent Skill's references, scripts, or assets directories, preserve key wording and meaning during Agent Skill edits, decide an Agent Skill's automatic-versus-manual invocation style, or asks about Agent Skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "2.3.0"
+  version: "2.4.0"
 ---
 
 # Skill Forge
@@ -211,6 +211,12 @@ Use these when they fit. Not all skills need all of them.
 ```
 
 The local `<skill-name>` directory must exactly match the frontmatter `name`. Remote repository naming is outside the Agent Skills specification and outside this skill's guidance.
+
+## Publishing
+
+When a skill is published to a repository host, set the host repository's description in the same step. It is a separate surface from the frontmatter `description`: the frontmatter description is the agent-facing trigger and may evolve with the skill, while the repository description is a short, stable one-liner for humans skimming a repository list. Write it once so it never needs to drift with the skill's internals: name the artifact class and its domain, nothing procedural, no trigger phrasing, no feature enumeration that a future version would invalidate.
+
+The shape: one sentence that opens with `Agent Skill` and states the skill's job in one clause. Every skill is described as an Agent Skill first, including opinions and standards skills. Durability is the main quality bar: write a description that stays accurate while the skill's internals evolve, and revise it only when a major refactor changes what the skill is. A published skill with a blank or stale repository description is an unfinished publish.
 
 Ship `AGENTS.md` and `README.md` by default for any skill meant to last: `AGENTS.md` as the maintenance contract, `README.md` as the human skim layer. They are recommended, not optional scaffolding. Omit them only for a throwaway or trivial skill. Only create the `references/`, `scripts/`, and `assets/` directories the skill actually uses.
 
