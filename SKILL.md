@@ -3,7 +3,7 @@ name: "skill-forge"
 description: "Create, design, refine, and validate Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new Agent Skill, improve an Agent Skill's triggering description, organize an Agent Skill's references, scripts, or assets directories, preserve key wording and meaning during Agent Skill edits, decide an Agent Skill's automatic-versus-manual invocation style, or asks about Agent Skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "2.4.0"
+  version: "2.5.0"
 ---
 
 # Skill Forge
@@ -169,6 +169,8 @@ An asset may contain editable placeholders. It does not need to be immutable, bu
 Prefer pointing to an asset over embedding the artifact's content inline in `SKILL.md` or a reference. An inlined artifact bloats every load and drifts from the copyable original.
 
 Do not create extra files speculatively. If `SKILL.md` does not tell the agent when to load or use a reference, asset, or script, that file is probably bloat.
+
+When a script is a deliverable the agent runs, give the skill root a `package.json` with `name` set to the skill name, `version` equal to `metadata.version` and bumped with it, `type` set to `module`, a `bin` mapping the skill name to the script, and `files` limited to the script, and a `license` field only when the repository has a license. At the point where `SKILL.md` tells the agent to run the script, show both routes: `node <skill-root>/scripts/<entry>.mjs <args>` when the skill is on disk, and `npx --yes github:<owner>/<repo> <args>` when it is served from its public repository, with Node as the only requirement either way. The script runs from the skill or from its repository rather than from a copy, because a copy drifts. Offer the remote route only for a public repository, since a private clone needs credentials.
 
 ## Vendored Upstream Sources
 
