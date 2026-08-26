@@ -145,6 +145,30 @@ for (const dir of ["references", "scripts", "assets"]) {
   }
 }
 
+// House: a runnable script deliverable ships a package.json whose name and
+// bin carry the skill name and whose version moves with metadata.version.
+const packagePath = join(root, "package.json");
+if (existsSync(packagePath)) {
+  let pkg;
+  try {
+    pkg = JSON.parse(readFileSync(packagePath, "utf8"));
+  } catch {
+    errors.push("package.json is not valid JSON");
+  }
+  if (pkg) {
+    const skillVersion = fields.metadata?.version;
+    if (pkg.version !== skillVersion)
+      errors.push(`package.json version \`${pkg.version}\` does not equal metadata.version \`${skillVersion}\``);
+    if (pkg.name !== name) errors.push(`package.json name \`${pkg.name}\` does not equal the skill name \`${name}\``);
+    const bin = pkg.bin && typeof pkg.bin === "object" ? pkg.bin : {};
+    if (!(name in bin)) errors.push(`package.json bin does not map the skill name \`${name}\``);
+    for (const target of Object.values(bin)) {
+      if (typeof target !== "string" || !existsSync(join(root, target)))
+        errors.push(`package.json bin target \`${target}\` does not exist`);
+    }
+  }
+}
+
 // House: recommended size budget.
 const lineCount = raw.split(/\r?\n/).length;
 if (lineCount > 500) warnings.push(`SKILL.md is ${lineCount} lines (recommended under 500)`);

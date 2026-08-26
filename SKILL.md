@@ -3,7 +3,7 @@ name: "skill-forge"
 description: "Create, design, refine, and validate Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new Agent Skill, improve an Agent Skill's triggering description, organize an Agent Skill's references, scripts, or assets directories, preserve key wording and meaning during Agent Skill edits, decide an Agent Skill's automatic-versus-manual invocation style, or asks about Agent Skill structure, naming conventions, or SKILL.md format."
 metadata:
   author: "Leeor Nahum"
-  version: "2.5.0"
+  version: "2.6.0"
 ---
 
 # Skill Forge
@@ -260,7 +260,7 @@ If a skill requires another skill to function, either merge them or reconsider t
 
 Before finishing:
 
-- Run the [bundled validator](scripts/validate.mjs) as `node scripts/validate.mjs <skill-root>` from this skill's root. It enforces the spec frontmatter contract, checks that every support file path named in the target `SKILL.md` exists, requires prose references to be Markdown links, and flags unreferenced support files. One documented softening: a `<name>-skill` repo checkout directory warns instead of failing, since the spec's name-matches-directory rule binds the installed path. Also run `skills-ref validate <skill-root>` when the official reference validator is available.
+- Run the [bundled validator](scripts/validate.mjs) as `node scripts/validate.mjs <skill-root>` from this skill's root. It enforces the spec frontmatter contract, checks that every support file path named in the target `SKILL.md` exists, requires prose references to be Markdown links, flags unreferenced support files, and, when a `package.json` is present, requires its name and `bin` to carry the skill name and its version to equal `metadata.version`. One documented softening: a `<name>-skill` repo checkout directory warns instead of failing, since the spec's name-matches-directory rule binds the installed path. Also run `skills-ref validate <skill-root>` when the official reference validator is available.
 - Confirm every support file named by `SKILL.md` has a direct loading condition.
 - Keep `SKILL.md` within the recommended line and token budgets.
 - Test the description against realistic should-trigger and near-miss should-not-trigger prompts, roughly ten of each, and tune until both sets pass.

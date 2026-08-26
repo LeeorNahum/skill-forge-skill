@@ -24,6 +24,7 @@ One owner per concern. Never hand-edit a generated file. Change `scripts/sync.mj
 - Capitalized bullets and parallel list voice.
 - Positive rules. Describe the category of mistake instead of preserving bad examples.
 - Placeholders only. This meta skill must not name real projects, repos, or people beyond its own metadata.
+- A rule the validator can check is checked there. A rule with no emitter is advisory and gets skipped, so a house rule a script can enforce lands in `scripts/validate.mjs` in the same change.
 - The Meaning Preservation section of `SKILL.md` applies to editing this skill too: preserve distinctive, high-signal wording.
 
 ## Sync provenance
