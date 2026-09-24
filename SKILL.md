@@ -1,9 +1,10 @@
 ---
 name: "skill-forge"
-description: "Create, design, refine, and validate Agent Skills that follow the open SKILL.md standard. Use when the user wants to create or author a new Agent Skill, improve an Agent Skill's triggering description, organize an Agent Skill's references, scripts, or assets directories, preserve key wording and meaning during Agent Skill edits, decide an Agent Skill's automatic-versus-manual invocation style, or asks about Agent Skill structure, naming conventions, or SKILL.md format."
+description: "Use when creating, designing, refining, reviewing, or validating an Agent Skill that follows the open SKILL.md standard: writing or tuning its triggering description, organizing its references, scripts, or assets directories, preserving key wording and meaning during edits, deciding automatic or manual invocation, or answering questions about skill structure, naming conventions, or SKILL.md format. Holds the authoring rules and a validator for the spec and house style."
+compatibility: "The bundled validator requires Node.js 18 or later. Its remote route also requires npm and network access when uncached."
 metadata:
   author: "Leeor Nahum"
-  version: "2.6.0"
+  version: "2.7.0"
 ---
 
 # Skill Forge
@@ -19,6 +20,8 @@ The upstream source of truth is [agentskills.io](https://agentskills.io/specific
 - Read [Using scripts](references/using-scripts.md) when adding or reviewing a `scripts/` directory.
 - Read [Evaluating skills](references/evaluating-skills.md) when building evals for a skill or measuring with-skill versus without-skill performance.
 - Read [Skill authoring best practices](references/best-practices.md) when structuring a complex multi-file skill and this file's rules leave a judgment call open.
+
+Where a reference conflicts with this file on house style, this file wins. The specification still wins on the format contract.
 
 ## What Each Part Is For
 
@@ -66,24 +69,14 @@ Frontmatter contract:
 
 These six keys are the complete set the specification defines. The reference validator rejects any other top-level key, so a host-specific field makes the skill fail strict validation. Do not add one. Custom properties belong under `metadata`.
 
-Version rules:
-
-- Patch: wording fixes, examples, small clarifications
-- Minor: new guidance, wider supported scenarios, better structure
-- Major: changed behavior, changed scope, renamed skill, or major rewrite
-
-When editing an existing skill, update `metadata.version` using [Semantic Versioning (semver)](https://semver.org/) in the same change whenever the skill's behavior changes. Never leave a substantive accepted skill edit at the old version. Make sure any README or release notes referencing current behavior are updated to match.
-
-Do not bump the version for every message, pass, or partial edit. During initial creation, active drafting, fast review loops, or uncommitted edits the same agent owns, keep the draft's version stable until the work is ready to be treated as the next version. Then make one semver bump that describes the finished change since the last committed, published, or otherwise accepted checkpoint.
-
-Before incrementing, check git for the last committed version of the skill file. If uncommitted changes have accumulated across multiple passes since that checkpoint, calibrate one bump to reflect the full delta honestly. A sequence of related additions since the last commit may warrant a single well-chosen minor bump rather than separate micro-increments per pass. If git history is unavailable, use the nearest meaningful checkpoint: the last user-approved draft, install, release, or handoff.
+Record the skill's version in `metadata.version`. The [release-versioning skill](https://github.com/LeeorNahum/release-versioning-skill) owns every version rule, including when a skill edit is a patch, minor, or major bump and when to make it.
 
 ## Description Rules
 
-The description is the trigger. It should describe both:
+The description is the trigger. It should describe both, in this order:
 
-1. What the skill does
-2. When the agent should use it
+1. When the agent should use it
+2. What the skill does
 
 Write for user intent, not internal implementation. Implementation steps, internal behaviors, and procedural detail belong in the body. The description covers only the high-level job and when to invoke. Be specific about domain, surface, and signal. Vague descriptions trigger on the wrong prompts or not at all. Keep it specific, high-signal, and under the spec limit. Prefer imperative phrasing that tells the agent when to use the skill. Err on the side of being pushy: list the situations that should trigger the skill even when the user would not name the domain themselves.
 
@@ -94,7 +87,7 @@ Too vague:
 Helps with data tasks.
 
 Better:
-Parse, validate, and export structured data to external formats. Use when reading CSV or JSON input, transforming records, or writing output files for downstream consumption.
+Use when reading CSV or JSON input, transforming records, or writing output files for downstream consumption. Parses, validates, and exports structured data to external formats.
 ```
 
 ## Content Philosophy
@@ -113,6 +106,8 @@ Prefer procedures, gotchas, checklists, validation loops, and output templates o
 
 Keep list voice consistent within a skill: parallel phrasing and one capitalization style across a list. Prefer starting bullets with a capital letter. Inconsistent list style reads as drift.
 
+Write a shorthand, when a skill uses one, once in parentheses after the full name at its first use, then use the shorthand alone.
+
 No code unless the code is the artifact. Include explicit code only when enforcing a pattern that must be followed exactly, where the code template is itself the deliverable rather than an illustration.
 
 No "When to Use" section. The description handles triggering. Repeating it in the body wastes tokens.
@@ -129,6 +124,7 @@ When editing or improving a skill:
 - If a phrase seems minor but anchors the whole skill's mentality, keep it
 - If a phrase carries real meaning, compression, taste, or domain signal, preserve it unless you are clearly improving it and deliberately relocating that meaning elsewhere
 - Do not replace high-signal language with flatter but more generic wording
+- Do not write a rule that only makes sense with the story of how it was edited. State it as if it had always been there
 
 ## Boundary Discipline
 
@@ -142,7 +138,13 @@ Avoid negative anchors in generic skills. Do not preserve bad examples, deprecat
 
 Positive examples anchor too. A sample name or token offered to illustrate a point is often copied verbatim instead of adapted. Use an example to show a shape or structure, and make clear the reader should choose the most accurate name for their own case rather than reusing the example's wording.
 
-When writing a reusable or meta skill, use placeholders unless a real proper noun is part of the skill's durable scope.
+Meta skills, skills about process, format, or methodology rather than a specific project, must not reference real names, repos, or artifacts from the context in which they were written. Examples should use invented, obviously-placeholder names. A leaked canonical reference creates an unintended dependency and anchors the skill to something that may change or not exist in another user's context. Project-specific skills are the exception: when a skill is explicitly scoped to a known repo, library, or codebase, proper nouns and real references are appropriate and desirable.
+
+Keep the moment of writing out of a reusable skill: the author's machine, paths, and session, real dates, measurements, and one-time incidents. The rule belongs in the skill. The evidence that produced it belongs in the change record.
+
+Name models by family, without a version, in prose. A pinned model identifier appears only inside a command, with the reason it is pinned.
+
+This skill's own frontmatter is not a template. Do not copy its concrete values into new skills. Use the placeholders in the Frontmatter section above.
 
 ## Progressive Disclosure
 
@@ -170,7 +172,20 @@ Prefer pointing to an asset over embedding the artifact's content inline in `SKI
 
 Do not create extra files speculatively. If `SKILL.md` does not tell the agent when to load or use a reference, asset, or script, that file is probably bloat.
 
-When a script is a deliverable the agent runs, give the skill root a `package.json` with `name` set to the skill name, `version` equal to `metadata.version` and bumped with it, `type` set to `module`, a `bin` mapping the skill name to the script, and `files` limited to the script, and a `license` field only when the repository has a license. At the point where `SKILL.md` tells the agent to run the script, show both routes: `node <skill-root>/scripts/<entry>.mjs <args>` when the skill is on disk, and `npx --yes github:<owner>/<repo> <args>` when it is served from its public repository, with Node as the only requirement either way. Offer the remote route only for a public repository, since a private clone needs credentials.
+Before bundling a script, look for a maintained executable from the authoritative upstream source. When one already implements the needed contract, invoke it directly through its ecosystem's run-without-install tool instead of copying or wrapping it. Pin its version when repeatability matters. State the actual runtime, package-runner, network, credential, and system-package requirements rather than treating one runtime as universal.
+
+Bundle a script when the logic belongs to the skill or needs to stay versioned with its instructions. Separate agent-facing helpers from maintainer-only sync, test, and release utilities. A maintainer utility does not become a user command merely because it lives under `scripts/`.
+
+For a new Node.js helper, prefer ESM and a `.mjs` entry point. Give the skill root a `package.json` with `name` set to the skill name, `version` equal to `metadata.version` and bumped with it, `type` set to `module`, a `bin` mapping the skill name to the script, and `files` limited to the executable and the helper modules, data, or assets it needs at runtime. Preserve a working CommonJS package when changing its module system would add churn without improving the helper. Add a `license` field only when the repository has a license. At the point where `SKILL.md` tells the agent to run the script, show a route that still works when the skill instructions were delivered without local files, followed by the installed-file route:
+
+```bash
+npx --yes github:<owner>/<public-repo> <args>
+node <skill-root>/scripts/<entry>.mjs <args>
+```
+
+Offer the repository route only when the repository is public and intended to execute. Use a tag or commit fragment when the caller must reproduce a fixed version. The local route stays useful offline and keeps execution aligned with an installed skill version.
+
+For a helper in another language, use that ecosystem's suitable remote runner and its ordinary local-file route, without a Node.js wrapper or `package.json` added only to imitate the pattern above.
 
 ## Vendored Upstream Sources
 
@@ -196,14 +211,14 @@ Use these when they fit. Not all skills need all of them.
 | **Table** | Same concept diverges by environment or surface |
 | **Gotchas** | Non-obvious constraints the agent will confidently get wrong |
 | **Checklist** | Multi-step workflow where skipping steps causes failures |
-| **Output template** | The agent must produce output in a specific, non-negotiable format |
+| **Output template** | The agent must produce output in a specific, non-negotiable format. An end-of-turn report is a Markdown table |
 | **Reference files** | Detail that's only needed conditionally and loaded on demand from `SKILL.md` |
 
 ## Directory Structure
 
 ```text
 <skill-name>/
-├── SKILL.md              # core, keep focused, under ~500 lines
+├── SKILL.md              # core, keep focused
 ├── AGENTS.md             # recommended, maintenance contract for editing the skill
 ├── references/           # documentation loaded on demand
 ├── scripts/              # executable code the agent runs
@@ -220,13 +235,13 @@ When a skill is published to a repository host, set the host repository's descri
 
 The shape: one sentence that opens with `Agent Skill` and states the skill's job in one clause. Every skill is described as an Agent Skill first, including opinions and standards skills. Durability is the main quality bar: write a description that stays accurate while the skill's internals evolve, and revise it only when a major refactor changes what the skill is. A published skill with a blank or stale repository description is an unfinished publish.
 
-Ship `AGENTS.md` and `README.md` by default for any skill meant to last: `AGENTS.md` as the maintenance contract, `README.md` as the human skim layer. They are recommended, not optional scaffolding. Omit them only for a throwaway or trivial skill. Only create the `references/`, `scripts/`, and `assets/` directories the skill actually uses.
+Ship `AGENTS.md` and `README.md` by default for any skill meant to last, in the roles the table in What Each Part Is For gives them. They are recommended, not optional scaffolding. Omit them only for a throwaway or trivial skill. Only create the `references/`, `scripts/`, and `assets/` directories the skill actually uses.
 
 Put conditional material in `references/` instead of leaving extra markdown files loose at the root.
 
-If a repo includes `README.md`, treat it as human-facing. It should be extremely concise, fast to skim, and focused on the minimum needed to understand the skill's value and file layout. Do not turn the README into a second `SKILL.md`.
+Keep `README.md` extremely concise, fast to skim, and focused on the minimum needed to understand the skill's value and file layout. Do not turn the README into a second `SKILL.md`.
 
-If a skill carries an `AGENTS.md`, treat it as the skill's maintenance contract: file roles, editing rules, wording conventions, sync provenance, and finishing checks for whoever edits the skill. Its job is continuity: many sessions of agent edits accumulate on a lasting skill, and the contract keeps style, voice, and scope from drifting across them. Keep that maintainer guidance out of `SKILL.md`, which stays purely user-facing usage. A note such as how a vendored reference is regenerated belongs in `AGENTS.md`, not in the skill body.
+`AGENTS.md` holds file roles, editing rules, wording conventions, sync provenance, and finishing checks. Its job is continuity: many sessions of agent edits accumulate on a lasting skill, and the contract keeps style, voice, and scope from drifting across them. Keep that maintainer guidance out of `SKILL.md`, which stays purely user-facing usage. A note such as how a vendored reference is regenerated belongs in `AGENTS.md`, not in the skill body.
 
 ## Invocation Style
 
@@ -242,14 +257,6 @@ If unsure, default to automatic. A well-scoped description avoids false positive
 
 Set manual-only behavior in the description itself, never with a frontmatter flag, which would be a non-spec key the Frontmatter contract forbids. A skill that should only run when the user names it says so plainly in its description. Reserve manual-only for skills where there is genuinely no user intent the description could match: the skill is a bare typed command, not a task. Do not go manual-only because of false-positive risk or timing concerns. Those are description problems. A manual-only skill still needs a description that states what it does and when, since the user reads it when choosing to invoke.
 
-## Avoid Canonical Leaks
-
-Meta skills, skills about process, format, or methodology rather than a specific project, must not reference real names, repos, or artifacts from the context in which they were written. Examples should use invented, obviously-placeholder names. A leaked canonical reference creates an unintended dependency and anchors the skill to something that may change or not exist in another user's context.
-
-This skill's own frontmatter is not a template. Do not copy its concrete values into new skills. Use the placeholders in the Frontmatter section above.
-
-Project-specific skills are the exception: when a skill is explicitly scoped to a known repo, library, or codebase, proper nouns and real references are appropriate and desirable.
-
 ## Scope
 
 A skill should encapsulate one coherent unit of work, narrow enough to trigger precisely and broad enough that it does not need a sibling skill loaded alongside it to do its job.
@@ -260,11 +267,8 @@ If a skill requires another skill to function, either merge them or reconsider t
 
 Before finishing:
 
-- Run the [bundled validator](scripts/validate.mjs) as `node scripts/validate.mjs <skill-root>` from this skill's root. It enforces the spec frontmatter contract, checks that every support file path named in the target `SKILL.md` exists, requires prose references to be Markdown links, flags unreferenced support files, and, when a `package.json` is present, requires its name and `bin` to carry the skill name and its version to equal `metadata.version`. One documented softening: a `<name>-skill` repo checkout directory warns instead of failing, since the spec's name-matches-directory rule binds the installed path. Also run `skills-ref validate <skill-root>` when the official reference validator is available.
+- Run the [bundled validator](scripts/validate.mjs) against the target skill. If Skill Forge was delivered remotely, use `npx --yes github:LeeorNahum/skill-forge-skill <skill-root>`. If it is installed on disk, `node <skill-forge-root>/scripts/validate.mjs <skill-root>` runs the aligned local copy. It enforces the spec frontmatter contract, checks that every support file path named in the target `SKILL.md` exists, requires prose references to be Markdown links, flags unreferenced support files, warns on unquoted frontmatter values and on U+2014 outside code, and, when a `package.json` is present, checks its identity, version, declared module type, executable mapping, and that its package file list includes each executable. Also run `skills-ref validate <skill-root>` when the official reference validator is available.
 - Confirm every support file named by `SKILL.md` has a direct loading condition.
-- Keep `SKILL.md` within the recommended line and token budgets.
 - Test the description against realistic should-trigger and near-miss should-not-trigger prompts, roughly ten of each, and tune until both sets pass.
 - Test realistic skill tasks and compare the output with a baseline or the previous version.
 - For scripts, document prerequisites, avoid interactive prompts, expose useful help, return actionable errors, and use structured output when another step consumes the result.
-
-The reference validator enforces the frontmatter contract: required `name` and `description`, the length caps, the `name` charset and parent-directory match, and rejection of any top-level key outside the six the specification defines. Every finding is an error and a failing run exits non-zero. It ships inside the specification repository as a reference implementation rather than a published package. The sibling commands `skills-ref read-properties` and `skills-ref to-prompt` inspect metadata and preview a catalog entry. It does not replace trigger, workflow, or output evaluation.

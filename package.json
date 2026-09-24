@@ -1,0 +1,12 @@
+{
+  "name": "skill-forge",
+  "version": "2.7.0",
+  "description": "Validates an Agent Skill against the open specification and Skill Forge's authoring rules.",
+  "type": "module",
+  "bin": {
+    "skill-forge": "scripts/validate.mjs"
+  },
+  "files": [
+    "scripts/validate.mjs"
+  ]
+}

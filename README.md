@@ -12,6 +12,7 @@ It is opinionated about quality and meaning, but not about temporary ecosystem p
 - `references/` holds the vendored Agent Skills specification and authoring guides, synced weekly from [agentskills/agentskills](https://github.com/agentskills/agentskills).
 - `scripts/sync.mjs` refreshes the vendored references.
 - `scripts/validate.mjs` validates any skill directory against the spec and requires clickable support-file routing, zero dependencies.
+- `package.json` makes that validator runnable from the public repository when the skill is not installed locally.
 - `AGENTS.md` is the maintenance contract for editing this skill.
 
 ## Install

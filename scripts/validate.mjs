@@ -51,6 +51,12 @@ for (const line of fm[1].split(/\r?\n/)) {
   const nested = line.match(/^\s+([\w-]+):\s*(.*)$/);
   const top = line.match(/^([\w-]+):\s*(.*)$/);
   const unquote = (v) => v.replace(/^"(.*)"$/s, "$1").replace(/^'(.*)'$/s, "$1");
+  // House: every frontmatter string value is quoted. Keys stay unquoted.
+  const checkQuoted = (key, value) => {
+    const v = value.trim();
+    if (v && !/^"[\s\S]*"$/.test(v) && !/^'[\s\S]*'$/.test(v))
+      warnings.push(`frontmatter value of \`${key}\` is unquoted. Quote every frontmatter string value`);
+  };
   if (top) {
     const [, key, value] = top;
     if (/^[|>][+-]?$/.test(value.trim())) {
@@ -63,10 +69,12 @@ for (const line of fm[1].split(/\r?\n/)) {
       fields[key] = {};
       currentMap = fields[key];
     } else {
+      checkQuoted(key, value);
       fields[key] = unquote(value.trim());
       currentMap = null;
     }
   } else if (nested && currentMap) {
+    checkQuoted(nested[1], nested[2]);
     currentMap[nested[1]] = unquote(nested[2].trim());
   }
 }
@@ -160,13 +168,58 @@ if (existsSync(packagePath)) {
     if (pkg.version !== skillVersion)
       errors.push(`package.json version \`${pkg.version}\` does not equal metadata.version \`${skillVersion}\``);
     if (pkg.name !== name) errors.push(`package.json name \`${pkg.name}\` does not equal the skill name \`${name}\``);
+    if ("type" in pkg && pkg.type !== "module" && pkg.type !== "commonjs")
+      errors.push("package.json type must be `module` or `commonjs` when declared");
     const bin = pkg.bin && typeof pkg.bin === "object" ? pkg.bin : {};
     if (!(name in bin)) errors.push(`package.json bin does not map the skill name \`${name}\``);
     for (const target of Object.values(bin)) {
       if (typeof target !== "string" || !existsSync(join(root, target)))
         errors.push(`package.json bin target \`${target}\` does not exist`);
     }
+    const packageFiles = Array.isArray(pkg.files)
+      ? [...new Set(pkg.files.filter((entry) => typeof entry === "string"))]
+      : [];
+    if (!packageFiles.length) {
+      errors.push("package.json files must list the executable and its runtime files");
+    } else {
+      const normalizePackagePath = (value) =>
+        value.replaceAll("\\", "/").replace(/^\.\/+/, "").replace(/\/+$/, "");
+      const normalizedFiles = packageFiles.map(normalizePackagePath);
+      const hasGlob = normalizedFiles.some((entry) => /[*?{}[\]]/.test(entry));
+      for (const target of Object.values(bin)) {
+        if (typeof target !== "string") continue;
+        const normalizedTarget = normalizePackagePath(target);
+        const covered = normalizedFiles.some(
+          (entry) => normalizedTarget === entry || normalizedTarget.startsWith(`${entry}/`),
+        );
+        if (!covered) {
+          const finding = `package.json files does not clearly include bin target \`${target}\``;
+          if (hasGlob) warnings.push(`${finding}. Verify the package glob with a dry-run pack`);
+          else errors.push(finding);
+        }
+      }
+    }
   }
+}
+
+// House: no em dashes (U+2014) in hand-written Markdown. Code fences and
+// inline code spans are skipped, so a skill can still show the character as
+// technical content. Generated files keep upstream text verbatim.
+const markdownFiles = readdirSync(root)
+  .filter((entry) => entry.endsWith(".md"))
+  .concat(
+    existsSync(join(root, "references"))
+      ? readdirSync(join(root, "references"))
+          .filter((entry) => entry.endsWith(".md"))
+          .map((entry) => `references/${entry}`)
+      : [],
+  );
+for (const file of markdownFiles) {
+  const text = readFileSync(join(root, file), "utf8");
+  if (/^<!--[^\n]*\bgenerated\b/i.test(text)) continue;
+  const prose = text.replace(/```[\s\S]*?```/g, "").replace(/`[^`\n]*`/g, "");
+  const count = (prose.match(/\u2014/g) ?? []).length;
+  if (count) warnings.push(`${file} contains ${count} em dash(es) (U+2014) outside code`);
 }
 
 // House: recommended size budget.
