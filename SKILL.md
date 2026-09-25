@@ -4,7 +4,7 @@ description: "Use before creating or editing any Agent Skill or any file bundled
 compatibility: "The bundled validator requires Node.js 18 or later. Its remote route also requires npm and network access when uncached."
 metadata:
   author: "Leeor Nahum"
-  version: "2.8.0"
+  version: "2.8.1"
 ---
 
 # Skill Forge
@@ -69,7 +69,7 @@ Frontmatter contract:
 
 These six keys are the complete set the specification defines. The reference validator rejects any other top-level key, so a host-specific field makes the skill fail strict validation. Do not add one. Custom properties belong under `metadata`.
 
-Record the skill's version in `metadata.version`. The [release-versioning skill](https://github.com/LeeorNahum/release-versioning-skill) owns every version rule, including when a skill edit is a patch, minor, or major bump and when to make it.
+Record the skill's version in `metadata.version`, and a `package.json` beside it, when there is one, carries the same number. The version usually moves when the authored skill changes: patch for wording and small clarifications, minor for new guidance or better structure, major for changed behavior, scope, or name.
 
 ## Description Rules
 
@@ -198,7 +198,7 @@ The working pattern:
 - A scheduled workflow runs the script and commits only when something changed, recording the upstream commit in the sync commit message. Provenance lives in git history, not in the tracked files
 - When the script rewrites upstream advice the skill disagrees with, add a workflow guard that fails if an un-rewritten instance slips through
 - Never hand-edit a generated file. Change the script or the upstream and re-run the sync
-- A sync-only content refresh does not bump `metadata.version`. The version tracks authored behavior
+- Regenerating these references from the upstream, with nothing the skill's author wrote changing, usually leaves `metadata.version` alone
 
 Document the upstream sources, transform rules, and update playbook in the skill's `AGENTS.md`.
 

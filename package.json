@@ -1,6 +1,6 @@
 {
   "name": "skill-forge",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "Validates an Agent Skill against the open specification and Skill Forge's authoring rules.",
   "type": "module",
   "bin": {
