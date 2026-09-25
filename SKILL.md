@@ -1,10 +1,10 @@
 ---
 name: "skill-forge"
-description: "Use when creating, designing, refining, reviewing, or validating an Agent Skill that follows the open SKILL.md standard: writing or tuning its triggering description, organizing its references, scripts, or assets directories, preserving key wording and meaning during edits, deciding automatic or manual invocation, or answering questions about skill structure, naming conventions, or SKILL.md format. Holds the authoring rules and a validator for the spec and house style."
+description: "Use before creating or editing any Agent Skill or any file bundled with one: a SKILL.md, a skill's description or frontmatter, its AGENTS.md or README, or a reference, script, asset, or other file under a skill directory. Load it before the first edit, not after. Also use when designing, refining, reviewing, or validating a skill that follows the open SKILL.md standard: writing or tuning its triggering description, organizing its references, scripts, or assets directories, preserving key wording and meaning during edits, deciding automatic or manual invocation, or answering questions about skill structure, naming conventions, or SKILL.md format. Holds the authoring rules and a validator for the spec and house style."
 compatibility: "The bundled validator requires Node.js 18 or later. Its remote route also requires npm and network access when uncached."
 metadata:
   author: "Leeor Nahum"
-  version: "2.7.0"
+  version: "2.8.0"
 ---
 
 # Skill Forge
