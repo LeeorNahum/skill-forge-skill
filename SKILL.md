@@ -4,7 +4,7 @@ description: "Use before creating or editing any Agent Skill or any file bundled
 compatibility: "The bundled validator requires Node.js 18 or later. Its remote route also requires npm and network access when uncached."
 metadata:
   author: "Leeor Nahum"
-  version: "2.8.1"
+  version: "2.8.2"
 ---
 
 # Skill Forge
@@ -98,7 +98,7 @@ Ground the skill in demonstrated expertise: real runs, corrections that were act
 
 Context bloat is not only verbosity. It is also nearby information that does not belong to the skill's true scope but slips in because it was present in the conversation.
 
-Generic best practices, standard library usage, and common patterns the agent already knows are also context bloat.
+Generic best practices, standard library usage, common patterns the agent already knows, and steps it would find by looking at the moment of use are also context bloat.
 
 Judge an addition against the whole skill, not the amount of attention it received in the current request. Give it only the prominence its lasting importance warrants. Prefer the smallest edit in the existing section or reference over new sections, repeated summaries, or broad rewrites.
 
